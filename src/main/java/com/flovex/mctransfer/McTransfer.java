@@ -19,6 +19,7 @@ public final class McTransfer extends JavaPlugin implements TabExecutor {
     @Override
     public void onEnable() {
         saveDefaultConfig();
+        migrateLegacyDestination();
         var command = getCommand("transfer");
         if (command == null) {
             getLogger().severe("The transfer command is missing from plugin.yml; disabling McTransfer.");
@@ -30,6 +31,18 @@ public final class McTransfer extends JavaPlugin implements TabExecutor {
         getLogger().info("McTransfer enabled. No proxy is required for native transfers.");
     }
 
+    private void migrateLegacyDestination() {
+        var legacy = getConfig().getConfigurationSection("servers.smpflovex");
+        if (legacy == null || getConfig().isConfigurationSection("servers.flovexsmp")) {
+            return;
+        }
+        Map<String, Object> values = legacy.getValues(true);
+        getConfig().createSection("servers.flovexsmp", values);
+        getConfig().set("servers.smpflovex", null);
+        saveConfig();
+        getLogger().info("Migrated destination key 'smpflovex' to 'flovexsmp'. Use /transfer flovexsmp.");
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
@@ -38,6 +51,7 @@ public final class McTransfer extends JavaPlugin implements TabExecutor {
                 return true;
             }
             reloadConfig();
+            migrateLegacyDestination();
             send(sender, "reloaded");
             return true;
         }
@@ -79,14 +93,17 @@ public final class McTransfer extends JavaPlugin implements TabExecutor {
             return true;
         }
 
+        getLogger().info("Sending " + (bedrock ? "Bedrock" : "Java")
+                + " transfer request for " + player.getName() + " to "
+                + displayName + " (" + host + ":" + port + ").");
         return transfer(player, displayName, host, port);
     }
 
     private boolean transfer(Player player, String displayName, String host, int port) {
         send(player, "transferring", "%server%", displayName);
         try {
-            // Paper sends the native client transfer packet. Geyser translates this
-            // packet for Bedrock clients, using the Bedrock endpoint selected above.
+            // Paper sends the native client transfer packet. The client then connects
+            // directly to the configured destination; this plugin does not freeze movement.
             player.transfer(host, port);
         } catch (IllegalStateException | IllegalArgumentException exception) {
             getLogger().warning("Transfer request failed for " + player.getName()
