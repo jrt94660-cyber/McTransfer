@@ -1,6 +1,6 @@
 # McTransfer
 
-A lightweight Paper plugin that transfers players directly between independently hosted Minecraft servers using the native Minecraft transfer packet. It does not use BungeeCord or Velocity.
+A lightweight Paper plugin that requests direct player transfers between independently hosted Minecraft servers using Minecraft's native transfer packet. It does not use BungeeCord or Velocity.
 
 ## Requirements
 
@@ -12,21 +12,29 @@ A lightweight Paper plugin that transfers players directly between independently
 ## Install
 
 1. Build the project with Java 21 and Maven, or download the JAR from the GitHub Actions artifact.
-2. Put `McTransfer-1.0.0.jar` in the source server's `plugins` folder.
+2. Put `McTransfer-1.0.1.jar` in the source server's `plugins` folder.
 3. Start the server once to generate `plugins/McTransfer/config.yml`.
 4. Edit the `servers` section to add destination servers.
-5. On every Java destination server, set `accept-transfers=true` in `server.properties` and restart it.
+5. On every Java destination server, enable incoming transfers with `accept-transfers=true` in `server.properties` (if supported by that server version) and restart it.
 
 ## Commands
 
-- `/transfer <server>` — transfer to a configured destination.
+- `/transfer <server>` — request a transfer to a configured destination.
 - `/transfer reload` — reload the configuration (permission: `mctransfer.admin`).
 
-## Configuration example
+## Default destination
+
+The default command is:
+
+```text
+/transfer flovexsmp
+```
+
+It uses this destination configuration:
 
 ```yaml
 servers:
-  smpflovex:
+  flovexsmp:
     display-name: "FlovexSMP"
     java:
       host: "smpflovex.playwithbao.com"
@@ -36,14 +44,13 @@ servers:
       port: 33984
 ```
 
-Use the actual public Geyser endpoint in the `bedrock` section. The Bedrock port is often different from the Java port. If the same address is used for both editions, the values can be identical.
-
-Add more named destinations by copying the `smpflovex` block and changing its name, host, and ports. Players use the key as the command argument, for example `/transfer survival`.
+The Java host/port must be the destination server's public Java endpoint. The Bedrock host/port must be the destination Geyser endpoint (often a different UDP port). Confirm these values with your host; do not assume the Java and Bedrock ports are the same.
 
 ## Important notes
 
-- Install this plugin on the server players are transferring **from**. The destination does not need McTransfer just to receive a native transfer, but its server software must accept transfers.
+- Install this plugin on the server players are transferring **from**. The destination does not need McTransfer just to receive a native transfer, but it must accept native transfers.
 - The target address must be directly reachable from each player's device. A plugin cannot make private, firewalled, or unallocated server ports reachable.
-- For Bedrock, Geyser must be running and listening on the configured Bedrock endpoint at the destination. McTransfer detects Geyser players and sends them to the Bedrock address/port instead of the Java endpoint.
+- For Bedrock, Geyser must be running and listening on the configured Bedrock endpoint at the destination.
 - This is a connection transfer, not shared inventory/world synchronization. Each server remains independent.
+- The plugin does not transfer players automatically on join; players must run `/transfer flovexsmp`.
 - Direct arbitrary host transfers are disabled by default. Prefer named destinations so Java and Bedrock players get the correct endpoint.
