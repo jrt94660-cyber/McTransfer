@@ -14,14 +14,14 @@ messages:
   reloaded: "&aConfiguration reloaded."
 
 servers:
-  smpflovex:
+  flovexsmp:
     display-name: "FlovexSMP"
     java:
       host: "smpflovex.playwithbao.com"
       port: 33984
     bedrock:
-      # Set this to the public Geyser address and UDP/TCP port players use.
-      # If your Geyser endpoint is the same host and port, keep these values.
+      # This must be the public Geyser endpoint/port players use to join the destination.
+      # Change it if Geyser uses a different address or Bedrock port.
       host: "smpflovex.playwithbao.com"
       port: 33984
 
