@@ -1,0 +1,19 @@
+name: McTransfer
+version: 1.0.0
+main: com.flovex.mctransfer.McTransfer
+api-version: '1.21.11'
+folia-supported: false
+description: Direct Java and Geyser Bedrock server transfers without a proxy.
+author: Flovex
+commands:
+  transfer:
+    description: Transfer to a configured server.
+    usage: /transfer <server>
+    aliases: [servertransfer]
+permissions:
+  mctransfer.use:
+    description: Allows using /transfer.
+    default: true
+  mctransfer.admin:
+    description: Allows reloading McTransfer configuration.
+    default: op
