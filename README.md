@@ -12,7 +12,7 @@ A lightweight Paper plugin that requests direct player transfers between indepen
 ## Install
 
 1. Build the project with Java 21 and Maven, or download the JAR from the GitHub Actions artifact.
-2. Put `McTransfer-1.0.1.jar` in the source server's `plugins` folder.
+2. Put `McTransfer-1.0.2.jar` in the source server's `plugins` folder.
 3. Start the server once to generate `plugins/McTransfer/config.yml`.
 4. Edit the `servers` section to add destination servers.
 5. On every Java destination server, enable incoming transfers with `accept-transfers=true` in `server.properties` (if supported by that server version) and restart it.
