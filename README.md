@@ -1,56 +1,50 @@
-# McTransfer
+# McTransfer 1.1.0
 
-A lightweight Paper plugin that requests direct player transfers between independently hosted Minecraft servers using Minecraft's native transfer packet. It does not use BungeeCord or Velocity.
+Paper plugin for direct native player transfers without BungeeCord/Velocity, plus PlaceholderAPI status placeholders for FancyHolograms and FancyNpcs.
 
 ## Requirements
+- Paper-compatible server and Java 21.
+- PlaceholderAPI for display placeholders.
+- FancyHolograms for hologram rendering.
+- FancyNpcs for clickable NPC interaction.
+- Geyser-Spigot on the source server for Bedrock-player detection.
 
-- Paper (or a compatible Paper fork) with the native player transfer API.
-- Java clients: supported by Paper's native transfer packet.
-- Bedrock clients: Geyser-Spigot must be installed on the source server. Each Bedrock destination must expose its own reachable Geyser address and port.
-- No proxy is required.
+## Transfer
+Install McTransfer on the lobby/source server. Configure the destination Java host/port and Bedrock Geyser host/UDP port in `plugins/McTransfer/config.yml`. Players use `/transfer flovexsmp`. The destination Java server must accept native transfers (where supported), and the address must be reachable from player devices.
 
-## Install
+## FancyHolograms placeholders
+- `%mctransfer_flovexsmp_name%` — display name
+- `%mctransfer_flovexsmp_online%` — online player count
+- `%mctransfer_flovexsmp_max%` — maximum player count
+- `%mctransfer_flovexsmp_players%` — online/max or OFFLINE
+- `%mctransfer_flovexsmp_status%` — ONLINE/OFFLINE
+- `%mctransfer_flovexsmp_click%` — configured click text
+- `%mctransfer_flovexsmp_motd_line1%` and `%mctransfer_flovexsmp_motd_line2%` — server-specific MOTD lines
+- `%mctransfer_motd_line1%`, `%mctransfer_motd_line2%`, `%mctransfer_motd_icon%` — global MOTD display values
 
-1. Build the project with Java 21 and Maven, or download the JAR from the GitHub Actions artifact.
-2. Put `McTransfer-1.0.2.jar` in the source server's `plugins` folder.
-3. Start the server once to generate `plugins/McTransfer/config.yml`.
-4. Edit the `servers` section to add destination servers.
-5. On every Java destination server, enable incoming transfers with `accept-transfers=true` in `server.properties` (if supported by that server version) and restart it.
+Example FancyHolograms text:
+```
+%mctransfer_flovexsmp_motd_line1%
+%mctransfer_flovexsmp_motd_line2%
+<gray>Players: <white>%mctransfer_flovexsmp_players%
+%mctransfer_flovexsmp_click%
+```
+
+Status is checked against the configured Java status endpoint every 30 seconds (configurable). The endpoint must permit server-list status pings. A failed ping displays OFFLINE and 0 players.
+
+## FancyNpcs click-to-join
+FancyHolograms text is not clickable by itself. Place a FancyNpcs INTERACTION NPC over the hologram and add a player command action:
+
+```
+/npc type flovex_join INTERACTION
+/npc action flovex_join RIGHT_CLICK add player_command transfer flovexsmp
+```
+
+Adjust the interaction NPC hitbox to cover the hologram. This deliberately uses FancyNpcs' player_command action to invoke McTransfer's direct transfer command. Do not use FancyNpcs' send_to_server action, which relies on proxy messaging.
+
+## MOTD note
+The two configured lines are an MOTD-style hologram display. They do not replace the actual multiplayer server-list MOTD of the lobby or destination. The icon setting is retained as metadata; it does not render a server-list icon in FancyHolograms.
 
 ## Commands
-
-- `/transfer <server>` — request a transfer to a configured destination.
-- `/transfer reload` — reload the configuration (permission: `mctransfer.admin`).
-
-## Default destination
-
-The default command is:
-
-```text
-/transfer flovexsmp
-```
-
-It uses this destination configuration:
-
-```yaml
-servers:
-  flovexsmp:
-    display-name: "FlovexSMP"
-    java:
-      host: "smpflovex.playwithbao.com"
-      port: 33984
-    bedrock:
-      host: "smpflovex.playwithbao.com"
-      port: 33984
-```
-
-The Java host/port must be the destination server's public Java endpoint. The Bedrock host/port must be the destination Geyser endpoint (often a different UDP port). Confirm these values with your host; do not assume the Java and Bedrock ports are the same.
-
-## Important notes
-
-- Install this plugin on the server players are transferring **from**. The destination does not need McTransfer just to receive a native transfer, but it must accept native transfers.
-- The target address must be directly reachable from each player's device. A plugin cannot make private, firewalled, or unallocated server ports reachable.
-- For Bedrock, Geyser must be running and listening on the configured Bedrock endpoint at the destination.
-- This is a connection transfer, not shared inventory/world synchronization. Each server remains independent.
-- The plugin does not transfer players automatically on join; players must run `/transfer flovexsmp`.
-- Direct arbitrary host transfers are disabled by default. Prefer named destinations so Java and Bedrock players get the correct endpoint.
+- `/transfer <server>`
+- `/transfer reload` (permission `mctransfer.admin`)
