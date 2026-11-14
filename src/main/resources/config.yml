@@ -1,8 +1,4 @@
-# McTransfer configuration
-# Add as many destinations as you need under "servers".
-# For Java players, use the destination's Java address and port.
-# For Bedrock players, use the destination's public Geyser address and Bedrock port.
-
+# McTransfer 1.1.0
 messages:
   prefix: "&8[&bMcTransfer&8] "
   no-permission: "&cYou don't have permission to use this command."
@@ -13,18 +9,27 @@ messages:
   transfer-failed: "&cCould not start the transfer. Check the destination settings."
   reloaded: "&aConfiguration reloaded."
 
+# MOTD-style display lines for holograms (MiniMessage formatting).
+# These do not change the actual multiplayer server-list MOTD.
+motd:
+  line1: "<bold><gradient:#00C9FC:#FFFFFF>FLOVEXSMP <gray><bold>[1.21 - 26.3]</bold></gray>"
+  line2: "<bold><gradient:#FF4B00:#FF7A00:#FFD08A>ECONOMY | CPVP</gradient></bold>"
+  icon: "random"
+  click-text: "<green>CLICK TO JOIN</green>"
+
+status:
+  refresh-seconds: 30
+
 servers:
   flovexsmp:
     display-name: "FlovexSMP"
+    click-text: "<green>CLICK TO JOIN</green>"
     java:
       host: "smpflovex.playwithbao.com"
       port: 33984
     bedrock:
-      # This must be the public Geyser endpoint/port players use to join the destination.
-      # Change it if Geyser uses a different address or Bedrock port.
+      # Set this to the destination Geyser public address and UDP port if different.
       host: "smpflovex.playwithbao.com"
       port: 33984
 
-# Optional: allow /transfer <hostname>:<port> for Java players only.
-# Named destinations above are recommended for reliable crossplay.
 allow-direct-java-addresses: false
