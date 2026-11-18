@@ -72,7 +72,11 @@ public final class McTransfer extends JavaPlugin implements TabExecutor {
             var section = getConfig().getConfigurationSection("servers");
             if (section == null) return;
             int configured = 0;
-            for (String key : section.getKeys(false)) {\n                if (++configured > 5) {\n                    getLogger().warning("Only the first 5 configured servers are polled for status; remove extra entries.");\n                    break;\n                }
+            for (String key : section.getKeys(false)) {
+                if (++configured > 5) {
+                    getLogger().warning("Only the first 5 configured servers are polled for status; remove extra entries.");
+                    break;
+                }
                 String path = "servers." + key + ".java.";
                 String host = getConfig().getString(path + "host", "");
                 int port = getConfig().getInt(path + "port", -1);
