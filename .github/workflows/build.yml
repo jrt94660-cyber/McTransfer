@@ -24,6 +24,6 @@ jobs:
       - name: Upload plugin JAR
         uses: actions/upload-artifact@v4
         with:
-          name: McTransfer-1.1.3
-          path: target/McTransfer-1.1.3.jar
+          name: McTransfer-1.1.4
+          path: target/McTransfer-1.1.4.jar
           if-no-files-found: error
