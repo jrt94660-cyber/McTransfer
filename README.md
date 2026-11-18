@@ -1,4 +1,4 @@
-# McTransfer 1.1.4
+# McTransfer 1.1.5
 
 Paper plugin for direct native transfers (no proxy required) with a PlaceholderAPI online-player-count placeholder.
 
@@ -20,3 +20,7 @@ Up to 5 destination entries under `servers:`. Default economy endpoint template:
 ## Commands
 - `/transfer <server-key>`
 - `/transfer reload` (permission `mctransfer.admin`)
+
+
+## Server Selector GUI
+Players receive a glowing compass when joining. Right-click it to open a menu showing configured destinations only. Click a destination to transfer. Configure each entry with optional `display-name` and `menu-item` under `servers.<key>`.
