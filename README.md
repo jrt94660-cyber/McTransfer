@@ -1,4 +1,4 @@
-# McTransfer 1.1.3
+# McTransfer 1.1.4
 
 Paper plugin for direct native transfers (no proxy required) with a PlaceholderAPI online-player-count placeholder.
 
@@ -15,7 +15,7 @@ Format: `%mctransfer_<server-key>_players%`
 For the default destination: `%mctransfer_economy_players%` returns only the online count, or `0` if status ping is unavailable. Compatible with MiniMOTD, FancyHolograms, FancyNpcs, and any PAPI-compatible plugin.
 
 ## Servers
-Up to 5 destination entries under `servers:`. Default economy endpoint: `manila.playwithbao.com:38051`. Status updates every 30 seconds by default (`status.refresh-seconds`).
+Up to 5 destination entries under `servers:`. Default economy endpoint template: `play.yourserver.net:19132` (change this to your server's address and port). Status updates every 30 seconds by default (`status.refresh-seconds`).
 
 ## Commands
 - `/transfer <server-key>`
