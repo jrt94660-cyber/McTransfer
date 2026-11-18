@@ -259,7 +259,7 @@ public final class McTransfer extends JavaPlugin implements TabExecutor, Listene
         ItemStack clicked = event.getCurrentItem();
         if (clicked == null || !clicked.hasItemMeta()) return;
         String target = clicked.getItemMeta().getPersistentDataContainer().get(serverKey, PersistentDataType.STRING);
-        if (target == null || !getConfig().isConfigurationSection("servers." + target)) return;
+        if (target == null || !getConfig().isConfigurationSection("servers." + target) || !getConfig().getBoolean("servers." + target + ".enabled", true)) return;
         event.getWhoClicked().closeInventory();
         if (event.getWhoClicked() instanceof Player player) {
             String path = "servers." + target;
@@ -293,6 +293,7 @@ public final class McTransfer extends JavaPlugin implements TabExecutor, Listene
         int[] slots = {10, 12, 14, 16, 22};
         int count = 0;
         for (String key : section.getKeys(false)) {
+            if (!getConfig().getBoolean("servers." + key + ".enabled", true)) continue;
             if (count >= slots.length) break;
             String base = "servers." + key;
             String materialName = getConfig().getString(base + ".menu-item", "NETHER_STAR");
@@ -346,7 +347,7 @@ public final class McTransfer extends JavaPlugin implements TabExecutor, Listene
 
         String requested = args[0].toLowerCase(Locale.ROOT);
         String base = "servers." + requested;
-        if (!getConfig().isConfigurationSection(base)) {
+        if (!getConfig().isConfigurationSection(base) || !getConfig().getBoolean(base + ".enabled", true)) {
             if (getConfig().getBoolean("allow-direct-java-addresses", false) && !isBedrockPlayer(player)) {
                 return transfer(player, args[0], args[0], 25565);
             }
