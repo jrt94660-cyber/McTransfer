@@ -1,4 +1,4 @@
-# McTransfer 1.1.0
+# McTransfer 1.1.1
 messages:
   prefix: "&8[&bMcTransfer&8] "
   no-permission: "&cYou don't have permission to use this command."
@@ -9,27 +9,51 @@ messages:
   transfer-failed: "&cCould not start the transfer. Check the destination settings."
   reloaded: "&aConfiguration reloaded."
 
-# MOTD-style display lines for holograms (MiniMessage formatting).
-# These do not change the actual multiplayer server-list MOTD.
-motd:
-  line1: "<bold><gradient:#00C9FC:#FFFFFF>FLOVEXSMP <gray><bold>[1.21 - 26.3]</bold></gray>"
-  line2: "<bold><gradient:#FF4B00:#FF7A00:#FFD08A>ECONOMY | CPVP</gradient></bold>"
-  icon: "random"
-  click-text: "<green>CLICK TO JOIN</green>"
-
+# Player count placeholder requires PlaceholderAPI.
+# Use: %mctransfer_<server-key>_players%
+# Example: %mctransfer_flovexsmp_players% returns only the online count.
+# You may configure up to 5 servers total. Keep server keys short, without underscores.
 status:
   refresh-seconds: 30
 
 servers:
+  # Existing entry retained; destination hostname updated to Manila.
   flovexsmp:
-    display-name: "FlovexSMP"
-    click-text: "<green>CLICK TO JOIN</green>"
     java:
-      host: "smpflovex.playwithbao.com"
+      host: "manila.playwithbao.com"
       port: 33984
     bedrock:
-      # Set this to the destination Geyser public address and UDP port if different.
-      host: "smpflovex.playwithbao.com"
+      host: "manila.playwithbao.com"
       port: 33984
+
+  # Add up to 4 more entries. Copy this example and replace the key/address/port.
+  # server2:
+  #   java:
+  #     host: "your-second-server.example"
+  #     port: 25565
+  #   bedrock:
+  #     host: "your-second-server.example"
+  #     port: 19132
+  # server3:
+  #   java:
+  #     host: "your-third-server.example"
+  #     port: 25565
+  #   bedrock:
+  #     host: "your-third-server.example"
+  #     port: 19132
+  # server4:
+  #   java:
+  #     host: "your-fourth-server.example"
+  #     port: 25565
+  #   bedrock:
+  #     host: "your-fourth-server.example"
+  #     port: 19132
+  # server5:
+  #   java:
+  #     host: "your-fifth-server.example"
+  #     port: 25565
+  #   bedrock:
+  #     host: "your-fifth-server.example"
+  #     port: 19132
 
 allow-direct-java-addresses: false
