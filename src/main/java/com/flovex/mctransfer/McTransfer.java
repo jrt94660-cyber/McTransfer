@@ -221,7 +221,7 @@ public final class McTransfer extends JavaPlugin implements TabExecutor, Listene
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', getConfig().getString("menu.compass-name", "&b&lServer Selector")));
         meta.setLore(colorLore(getConfig().getStringList("menu.compass-lore")));
         meta.addEnchant(Enchantment.UNBREAKING, 1, true);
-        meta.setPersistentDataContainer().set(compassKey, PersistentDataType.BYTE, (byte) 1);
+        meta.getPersistentDataContainer().set(compassKey, PersistentDataType.BYTE, (byte) 1);
         item.setItemMeta(meta);
         return item;
     }
