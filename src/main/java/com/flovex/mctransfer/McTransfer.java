@@ -347,7 +347,11 @@ public final class McTransfer extends JavaPlugin implements TabExecutor, Listene
 
         String requested = args[0].toLowerCase(Locale.ROOT);
         String base = "servers." + requested;
-        if (!getConfig().isConfigurationSection(base) || !getConfig().getBoolean(base + ".enabled", true)) {
+        if (getConfig().isConfigurationSection(base) && !getConfig().getBoolean(base + ".enabled", true)) {
+            send(player, "unknown-server", "%server%", args[0]);
+            return true;
+        }
+        if (!getConfig().isConfigurationSection(base)) {
             if (getConfig().getBoolean("allow-direct-java-addresses", false) && !isBedrockPlayer(player)) {
                 return transfer(player, args[0], args[0], 25565);
             }
