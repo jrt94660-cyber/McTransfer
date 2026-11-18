@@ -26,6 +26,7 @@ status:
 servers:
   # Default destination: economy
   economy:
+    enabled: true # Set false to hide this server from the selector and disable transfers to it.
     display-name: "&b&lEconomy"
     menu-item: "GOLD_INGOT"
     java:
