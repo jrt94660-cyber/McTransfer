@@ -25,5 +25,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: McTransfer-1.1.2
-          path: target/McTransfer-1.1.1.jar
+          path: target/McTransfer-1.1.2.jar
           if-no-files-found: error
