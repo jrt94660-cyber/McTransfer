@@ -1,4 +1,4 @@
-# McTransfer 1.1.4
+# McTransfer 1.1.5
 messages:
   prefix: "&8[&bMcTransfer&8] "
   no-permission: "&cYou don't have permission to use this command."
@@ -13,21 +13,32 @@ messages:
 # Use: %mctransfer_<server-key>_players%
 # Example: %mctransfer_economy_players% returns only the online count.
 # You may configure up to 5 servers total. Keep server keys short, without underscores.
+menu:
+  title: "&8Server Selector"
+  compass-name: "&b&lServer Selector"
+  compass-lore:
+    - "&7Right-click to browse servers."
+    - "&7Select a server to transfer."
+
 status:
   refresh-seconds: 30
 
 servers:
   # Default destination: economy
   economy:
+    display-name: "&b&lEconomy"
+    menu-item: "GOLD_INGOT"
     java:
       host: "play.yourserver.net"
       port: 19132
     bedrock:
-      host: "manila.playwithbao.com"
+      host: "play.yourserver.net"
       port: 19132
 
   # Add up to 4 more entries. Copy this example and replace the key/address/port.
   # server2:
+#   display-name: "&a&lSurvival"
+#   menu-item: "GRASS_BLOCK"
   #   java:
   #     host: "your-second-server.example"
   #     port: 25565
