@@ -1,30 +1,22 @@
-# McTransfer 1.1.1
+# McTransfer 1.1.3
 
-Paper plugin for direct native transfers (no proxy required) with a simple PlaceholderAPI online-player-count placeholder.
+Paper plugin for direct native transfers (no proxy required) with a PlaceholderAPI online-player-count placeholder.
 
 ## Requirements
 - Paper-compatible server, Java 21.
-- PlaceholderAPI for the player count placeholder.
+- PlaceholderAPI for online-player placeholders.
 - Geyser-Spigot on the source server for Bedrock player detection.
 
 ## Transfers
-Use `/transfer <server-key>`. Destination keys and Java/Bedrock host/ports are configured in `plugins/McTransfer/config.yml`.
+Use `/transfer <server-key>`. The default destination key is `economy`: `/transfer economy`.
 
-## PlaceholderAPI (players only)
-Placeholder format: `%mctransfer_<server-key>_players%`
+## PlaceholderAPI
+Format: `%mctransfer_<server-key>_players%`
+For the default destination: `%mctransfer_economy_players%` returns only the online count, or `0` if status ping is unavailable. Compatible with MiniMOTD, FancyHolograms, FancyNpcs, and any PAPI-compatible plugin.
 
-For the configured `flovexsmp` entry:
-`%mctransfer_flovexsmp_players%`
-
-This returns only the online count (example `24`). If status ping fails, it returns `0`. It can be used with MiniMOTD, FancyHolograms, FancyNpcs, or any plugin that supports PlaceholderAPI placeholders.
-
-## Server slots
-Configure up to five destination entries total under `servers:`. The existing `flovexsmp` entry is retained as the same key so current transfer command/tab completion references continue working; its host is now `manila.playwithbao.com` and port remains `33984`. Add up to four more server entries using the commented examples.
-
-Status is polled every 30 seconds by default; change `status.refresh-seconds` to adjust.
+## Servers
+Up to 5 destination entries under `servers:`. Default economy endpoint: `manila.playwithbao.com:38051`. Status updates every 30 seconds by default (`status.refresh-seconds`).
 
 ## Commands
 - `/transfer <server-key>`
 - `/transfer reload` (permission `mctransfer.admin`)
-
-Build version: 1.1.2.
