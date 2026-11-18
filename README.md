@@ -26,3 +26,5 @@ Status is polled every 30 seconds by default; change `status.refresh-seconds` to
 ## Commands
 - `/transfer <server-key>`
 - `/transfer reload` (permission `mctransfer.admin`)
+
+Build version: 1.1.2.
