@@ -5,6 +5,22 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.event.block.Action;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.ByteArrayOutputStream;
@@ -24,12 +40,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class McTransfer extends JavaPlugin implements TabExecutor {
+public final class McTransfer extends JavaPlugin implements TabExecutor, Listener {
+    private NamespacedKey compassKey;
+    private NamespacedKey serverKey;
     private final Map<String, ServerStatus> statuses = new ConcurrentHashMap<>();
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
+        compassKey = new NamespacedKey(this, "server_selector_compass");
+        serverKey = new NamespacedKey(this, "menu_server_key");
+        getServer().getPluginManager().registerEvents(this, this);
         migrateLegacyDestination();
         var command = getCommand("transfer");
         if (command == null) {
@@ -184,6 +205,118 @@ public final class McTransfer extends JavaPlugin implements TabExecutor {
 
     record ServerStatus(boolean online, int players, int maxPlayers) {
         static ServerStatus offline() { return new ServerStatus(false, 0, 0); }
+    }
+
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        ItemStack compass = createSelectorCompass();
+        player.getInventory().setItem(8, compass);
+    }
+
+    private ItemStack createSelectorCompass() {
+        ItemStack item = new ItemStack(Material.COMPASS);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', getConfig().getString("menu.compass-name", "&b&lServer Selector")));
+        meta.setLore(colorLore(getConfig().getStringList("menu.compass-lore")));
+        meta.addEnchant(Enchantment.UNBREAKING, 1, true);
+        meta.setPersistentDataContainer().set(compassKey, PersistentDataType.BYTE, (byte) 1);
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    private List<String> colorLore(List<String> lines) {
+        List<String> result = new ArrayList<>();
+        for (String line : lines) result.add(ChatColor.translateAlternateColorCodes('&', line));
+        return result;
+    }
+
+    private boolean isSelectorCompass(ItemStack item) {
+        if (item == null || item.getType() != Material.COMPASS || !item.hasItemMeta()) return false;
+        return item.getItemMeta().getPersistentDataContainer().has(compassKey, PersistentDataType.BYTE);
+    }
+
+    @EventHandler
+    public void onCompassInteract(PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+        if (!isSelectorCompass(event.getItem())) return;
+        event.setCancelled(true);
+        openServerMenu(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onCompassDrop(PlayerDropItemEvent event) {
+        if (isSelectorCompass(event.getItemDrop().getItemStack())) event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onCompassInventoryClick(InventoryClickEvent event) {
+        if (isSelectorCompass(event.getCurrentItem()) || isSelectorCompass(event.getCursor())) event.setCancelled(true);
+        if (!(event.getView().getTopInventory().getHolder() instanceof ServerMenuHolder holder)) return;
+        event.setCancelled(true);
+        if (event.getClickedInventory() != event.getView().getTopInventory()) return;
+        ItemStack clicked = event.getCurrentItem();
+        if (clicked == null || !clicked.hasItemMeta()) return;
+        String target = clicked.getItemMeta().getPersistentDataContainer().get(serverKey, PersistentDataType.STRING);
+        if (target == null || !getConfig().isConfigurationSection("servers." + target)) return;
+        event.getWhoClicked().closeInventory();
+        if (event.getWhoClicked() instanceof Player player) {
+            String path = "servers." + target;
+            boolean bedrock = isBedrockPlayer(player);
+            String edition = path + (bedrock ? ".bedrock" : ".java");
+            String host = getConfig().getString(edition + ".host", "").trim();
+            int port = getConfig().getInt(edition + ".port", -1);
+            String name = getConfig().getString(path + ".display-name", target);
+            if (host.isBlank() || port < 1 || port > 65535) {
+                send(player, "transfer-failed");
+                return;
+            }
+            transfer(player, name, host, port);
+        }
+    }
+
+    @EventHandler
+    public void onMenuDrag(InventoryDragEvent event) {
+        if (event.getView().getTopInventory().getHolder() instanceof ServerMenuHolder) event.setCancelled(true);
+    }
+
+    private void openServerMenu(Player player) {
+        var section = getConfig().getConfigurationSection("servers");
+        if (section == null || section.getKeys(false).isEmpty()) {
+            player.sendMessage(ChatColor.RED + "No transfer destinations are configured.");
+            return;
+        }
+        ServerMenuHolder holder = new ServerMenuHolder();
+        Inventory menu = getServer().createInventory(holder, 27,
+                ChatColor.translateAlternateColorCodes('&', getConfig().getString("menu.title", "&8Server Selector")));
+        int[] slots = {10, 12, 14, 16, 22};
+        int count = 0;
+        for (String key : section.getKeys(false)) {
+            if (count >= slots.length) break;
+            String base = "servers." + key;
+            String materialName = getConfig().getString(base + ".menu-item", "NETHER_STAR");
+            Material material = Material.matchMaterial(materialName);
+            if (material == null || material.isAir()) material = Material.NETHER_STAR;
+            ItemStack icon = new ItemStack(material);
+            ItemMeta meta = icon.getItemMeta();
+            String display = getConfig().getString(base + ".display-name", key);
+            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', display));
+            List<String> lore = new ArrayList<>();
+            lore.add(ChatColor.GRAY + "Online: " + (getStatus(key).online() ? getStatus(key).players() : 0));
+            lore.add(ChatColor.GRAY + "Click to connect");
+            meta.setLore(lore);
+            meta.getPersistentDataContainer().set(serverKey, PersistentDataType.STRING, key);
+            icon.setItemMeta(meta);
+            menu.setItem(slots[count++], icon);
+        }
+        holder.inventory = menu;
+        player.openInventory(menu);
+    }
+
+    private static final class ServerMenuHolder implements InventoryHolder {
+        private Inventory inventory;
+        @Override public Inventory getInventory() { return inventory; }
     }
 
     @Override
