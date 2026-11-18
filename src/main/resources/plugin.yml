@@ -1,9 +1,9 @@
 name: McTransfer
-version: 1.1.0
+version: 1.1.1
 main: com.flovex.mctransfer.McTransfer
 api-version: '1.21.11'
 folia-supported: false
-description: Direct transfers with PlaceholderAPI status placeholders for FancyHolograms and FancyNpcs.
+description: Direct server transfers with online-player-count PlaceholderAPI expansion.
 author: Flovex
 softdepend: [Geyser-Spigot, Geyser, PlaceholderAPI]
 commands:
