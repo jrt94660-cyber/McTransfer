@@ -58,15 +58,17 @@ public final class McTransfer extends JavaPlugin implements TabExecutor {
     }
 
     private void migrateLegacyDestination() {
-        var legacy = getConfig().getConfigurationSection("servers.smpflovex");
-        if (legacy == null || getConfig().isConfigurationSection("servers.flovexsmp")) return;
+        if (getConfig().isConfigurationSection("servers.economy")) return;
+        var legacy = getConfig().getConfigurationSection("servers.flovexsmp");
+        if (legacy == null) legacy = getConfig().getConfigurationSection("servers.smpflovex");
+        if (legacy == null) return;
         Map<String, Object> values = legacy.getValues(true);
-        getConfig().createSection("servers.flovexsmp", values);
+        getConfig().createSection("servers.economy", values);
+        getConfig().set("servers.flovexsmp", null);
         getConfig().set("servers.smpflovex", null);
         saveConfig();
-        getLogger().info("Migrated destination key 'smpflovex' to 'flovexsmp'.");
+        getLogger().info("Migrated legacy destination to server key 'economy'.");
     }
-
     private void startStatusPolling() {
         getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
             var section = getConfig().getConfigurationSection("servers");
