@@ -71,7 +71,8 @@ public final class McTransfer extends JavaPlugin implements TabExecutor {
         getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
             var section = getConfig().getConfigurationSection("servers");
             if (section == null) return;
-            int configured = 0;\n            for (String key : section.getKeys(false)) {\n                if (++configured > 5) {\n                    getLogger().warning("Only the first 5 configured servers are polled for status; remove extra entries.");\n                    break;\n                }
+            int configured = 0;
+            for (String key : section.getKeys(false)) {\n                if (++configured > 5) {\n                    getLogger().warning("Only the first 5 configured servers are polled for status; remove extra entries.");\n                    break;\n                }
                 String path = "servers." + key + ".java.";
                 String host = getConfig().getString(path + "host", "");
                 int port = getConfig().getInt(path + "port", -1);
