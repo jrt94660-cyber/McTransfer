@@ -1,4 +1,4 @@
-# McTransfer 1.1.3
+# McTransfer 1.1.4
 messages:
   prefix: "&8[&bMcTransfer&8] "
   no-permission: "&cYou don't have permission to use this command."
@@ -20,11 +20,11 @@ servers:
   # Default destination: economy
   economy:
     java:
-      host: "manila.playwithbao.com"
-      port: 38051
+      host: "play.yourserver.net"
+      port: 19132
     bedrock:
       host: "manila.playwithbao.com"
-      port: 33984
+      port: 19132
 
   # Add up to 4 more entries. Copy this example and replace the key/address/port.
   # server2:
