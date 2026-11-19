@@ -21,6 +21,8 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.event.block.Action;
+import org.bukkit.block.Block;
+import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.ByteArrayOutputStream;
@@ -212,7 +214,7 @@ public final class McTransfer extends JavaPlugin implements TabExecutor, Listene
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         ItemStack compass = createSelectorCompass();
-        player.getInventory().setItem(8, compass);
+        player.getInventory().setItem(4, compass);
     }
 
     private ItemStack createSelectorCompass() {
@@ -242,7 +244,34 @@ public final class McTransfer extends JavaPlugin implements TabExecutor, Listene
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
         if (!isSelectorCompass(event.getItem())) return;
         event.setCancelled(true);
-        openServerMenu(event.getPlayer());
+        teleportToTargetBlock(event.getPlayer());
+    }
+
+    private void teleportToTargetBlock(Player player) {
+        Block target = player.getTargetBlockExact(100);
+        if (target == null) {
+            player.sendMessage(ChatColor.RED + "Aim at a block within 100 blocks to teleport.");
+            return;
+        }
+        Location base = target.getLocation();
+        Location destination = null;
+        for (int offset = 1; offset <= 4; offset++) {
+            Location candidate = base.clone().add(0.5, offset, 0.5);
+            Block feet = candidate.getBlock();
+            Block head = candidate.clone().add(0, 1, 0).getBlock();
+            Block floor = candidate.clone().add(0, -1, 0).getBlock();
+            if (feet.isPassable() && head.isPassable() && floor.getType().isSolid()) {
+                destination = candidate;
+                break;
+            }
+        }
+        if (destination == null) {
+            player.sendMessage(ChatColor.RED + "No safe place to teleport at that location.");
+            return;
+        }
+        destination.setYaw(player.getLocation().getYaw());
+        destination.setPitch(player.getLocation().getPitch());
+        player.teleport(destination);
     }
 
     @EventHandler
