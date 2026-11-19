@@ -23,6 +23,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.event.block.Action;
 import org.bukkit.block.Block;
 import org.bukkit.Location;
+import org.bukkit.FluidCollisionMode;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.ByteArrayOutputStream;
@@ -248,9 +249,11 @@ public final class McTransfer extends JavaPlugin implements TabExecutor, Listene
     }
 
     private void teleportToTargetBlock(Player player) {
-        Block target = player.getTargetBlockExact(100);
+        var hit = player.getWorld().rayTraceBlocks(player.getEyeLocation(),
+                player.getEyeLocation().getDirection(), 100.0, FluidCollisionMode.NEVER, true);
+        Block target = hit == null ? null : hit.getHitBlock();
         if (target == null) {
-            player.sendMessage(ChatColor.RED + "Aim at a block within 100 blocks to teleport.");
+            player.sendMessage(ChatColor.RED + "Aim directly at a block within 100 blocks to teleport.");
             return;
         }
         Location base = target.getLocation();
