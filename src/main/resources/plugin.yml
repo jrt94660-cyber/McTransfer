@@ -1,5 +1,5 @@
 name: McTransfer
-version: 1.1.7
+version: 1.1.8
 main: com.flovex.mctransfer.McTransfer
 api-version: '1.21.11'
 folia-supported: false
