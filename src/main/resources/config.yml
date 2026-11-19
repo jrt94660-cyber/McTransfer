@@ -1,4 +1,4 @@
-# McTransfer 1.1.5
+# McTransfer 1.1.7
 messages:
   prefix: "&8[&bMcTransfer&8] "
   no-permission: "&cYou don't have permission to use this command."
@@ -17,8 +17,8 @@ menu:
   title: "&8Server Selector"
   compass-name: "&b&lServer Selector"
   compass-lore:
-    - "&7Right-click to browse servers."
-    - "&7Select a server to transfer."
+    - "&7Right-click while aiming at a block to teleport."
+    - "&7Teleport to your targeted block."
 
 status:
   refresh-seconds: 30
