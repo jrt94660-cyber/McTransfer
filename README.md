@@ -1,4 +1,4 @@
-# McTransfer 1.1.8
+# McTransfer 1.1.9
 
 Paper plugin for direct native transfers (no proxy required) with a PlaceholderAPI online-player-count placeholder.
 
@@ -23,4 +23,4 @@ Up to 5 destination entries under `servers:`. Default economy endpoint template:
 
 
 ## Server Selector GUI
-Players receive a glowing compass in the center hotbar slot (slot 5). Right-click it while aiming at a block within 100 blocks to teleport to that block's top, if a safe landing spot exists. Uses ray-tracing from the player's eyes to identify the block under the crosshair, then checks up to four blocks above it for a safe landing (two clear blocks plus solid floor). The compass no longer opens the server selector GUI.
+Players receive a glowing compass in the center hotbar slot (slot 5). Right-click it to open the server selector GUI. Click any enabled destination to transfer. Local block-target teleporting has been removed.
