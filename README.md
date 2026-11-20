@@ -1,4 +1,4 @@
-# McTransfer 1.1.9
+# McTransfer 1.1.10
 
 Paper plugin for direct native transfers (no proxy required) with a PlaceholderAPI online-player-count placeholder.
 
