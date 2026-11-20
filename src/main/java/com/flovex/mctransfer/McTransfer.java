@@ -13,7 +13,6 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.enchantments.Enchantment;
@@ -245,36 +244,7 @@ public final class McTransfer extends JavaPlugin implements TabExecutor, Listene
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
         if (!isSelectorCompass(event.getItem())) return;
         event.setCancelled(true);
-        teleportToTargetBlock(event.getPlayer());
-    }
-
-    private void teleportToTargetBlock(Player player) {
-        var hit = player.getWorld().rayTraceBlocks(player.getEyeLocation(),
-                player.getEyeLocation().getDirection(), 100.0, FluidCollisionMode.NEVER, true);
-        Block target = hit == null ? null : hit.getHitBlock();
-        if (target == null) {
-            player.sendMessage(ChatColor.RED + "Aim directly at a block within 100 blocks to teleport.");
-            return;
-        }
-        Location base = target.getLocation();
-        Location destination = null;
-        for (int offset = 1; offset <= 4; offset++) {
-            Location candidate = base.clone().add(0.5, offset, 0.5);
-            Block feet = candidate.getBlock();
-            Block head = candidate.clone().add(0, 1, 0).getBlock();
-            Block floor = candidate.clone().add(0, -1, 0).getBlock();
-            if (feet.isPassable() && head.isPassable() && floor.getType().isSolid()) {
-                destination = candidate;
-                break;
-            }
-        }
-        if (destination == null) {
-            player.sendMessage(ChatColor.RED + "No safe place to teleport at that location.");
-            return;
-        }
-        destination.setYaw(player.getLocation().getYaw());
-        destination.setPitch(player.getLocation().getPitch());
-        player.teleport(destination);
+        openServerMenu(event.getPlayer());
     }
 
     @EventHandler
@@ -285,7 +255,7 @@ public final class McTransfer extends JavaPlugin implements TabExecutor, Listene
     @EventHandler
     public void onCompassInventoryClick(InventoryClickEvent event) {
         if (isSelectorCompass(event.getCurrentItem()) || isSelectorCompass(event.getCursor())) event.setCancelled(true);
-        if (!(event.getView().getTopInventory().getHolder() instanceof ServerMenuHolder holder)) return;
+        if (!isServerMenu(event.getView().getTopInventory())) return;
         event.setCancelled(true);
         if (event.getClickedInventory() != event.getView().getTopInventory()) return;
         ItemStack clicked = event.getCurrentItem();
@@ -310,7 +280,7 @@ public final class McTransfer extends JavaPlugin implements TabExecutor, Listene
 
     @EventHandler
     public void onMenuDrag(InventoryDragEvent event) {
-        if (event.getView().getTopInventory().getHolder() instanceof ServerMenuHolder) event.setCancelled(true);
+        if (isServerMenu(event.getView().getTopInventory())) event.setCancelled(true);
     }
 
     private void openServerMenu(Player player) {
@@ -320,7 +290,7 @@ public final class McTransfer extends JavaPlugin implements TabExecutor, Listene
             return;
         }
         ServerMenuHolder holder = new ServerMenuHolder();
-        Inventory menu = getServer().createInventory(holder, 27,
+        Inventory menu = getServer().createInventory(null, 27,
                 ChatColor.translateAlternateColorCodes('&', getConfig().getString("menu.title", "&8Server Selector")));
         int[] slots = {10, 12, 14, 16, 22};
         int count = 0;
@@ -343,13 +313,14 @@ public final class McTransfer extends JavaPlugin implements TabExecutor, Listene
             icon.setItemMeta(meta);
             menu.setItem(slots[count++], icon);
         }
-        holder.inventory = menu;
         player.openInventory(menu);
     }
 
-    private static final class ServerMenuHolder implements InventoryHolder {
-        private Inventory inventory;
-        @Override public Inventory getInventory() { return inventory; }
+    private boolean isServerMenu(Inventory inventory) {
+        return inventory != null && inventory.getSize() == 27
+                && inventory.getViewers().stream().anyMatch(viewer -> viewer instanceof Player)
+                && inventory.getTitle().equals(ChatColor.translateAlternateColorCodes('&',
+                    getConfig().getString("menu.title", "&8Server Selector")));
     }
 
     @Override
