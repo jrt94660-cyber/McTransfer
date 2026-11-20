@@ -215,11 +215,11 @@ public final class McTransfer extends JavaPlugin implements TabExecutor, Listene
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         ItemStack paper = createSelectorPaper();
-        player.getInventory().setItem(4, compass);
+        player.getInventory().setItem(4, paper);
     }
 
     private ItemStack createSelectorPaper() {
-        ItemStack item = new ItemStack(Material.COMPASS);
+        ItemStack item = new ItemStack(Material.PAPER);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', getConfig().getString("menu.paper-name", "&b&lServer Selector")));
         meta.setLore(colorLore(getConfig().getStringList("menu.paper-lore")));
