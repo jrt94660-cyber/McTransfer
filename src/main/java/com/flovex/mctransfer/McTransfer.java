@@ -214,15 +214,15 @@ public final class McTransfer extends JavaPlugin implements TabExecutor, Listene
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        ItemStack compass = createSelectorPaper();
+        ItemStack paper = createSelectorPaper();
         player.getInventory().setItem(4, compass);
     }
 
     private ItemStack createSelectorPaper() {
         ItemStack item = new ItemStack(Material.COMPASS);
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', getConfig().getString("menu.compass-name", "&b&lServer Selector")));
-        meta.setLore(colorLore(getConfig().getStringList("menu.compass-lore")));
+        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', getConfig().getString("menu.paper-name", "&b&lServer Selector")));
+        meta.setLore(colorLore(getConfig().getStringList("menu.paper-lore")));
         meta.addEnchant(Enchantment.UNBREAKING, 1, true);
         meta.getPersistentDataContainer().set(paperKey, PersistentDataType.BYTE, (byte) 1);
         item.setItemMeta(meta);
@@ -236,7 +236,7 @@ public final class McTransfer extends JavaPlugin implements TabExecutor, Listene
     }
 
     private boolean isSelectorPaper(ItemStack item) {
-        if (item == null || item.getType() != Material.COMPASS || !item.hasItemMeta()) return false;
+        if (item == null || item.getType() != Material.PAPER || !item.hasItemMeta()) return false;
         return item.getItemMeta().getPersistentDataContainer().has(paperKey, PersistentDataType.BYTE);
     }
 
