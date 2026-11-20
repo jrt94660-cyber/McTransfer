@@ -13,6 +13,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.enchantments.Enchantment;
@@ -255,7 +256,7 @@ public final class McTransfer extends JavaPlugin implements TabExecutor, Listene
     @EventHandler
     public void onCompassInventoryClick(InventoryClickEvent event) {
         if (isSelectorCompass(event.getCurrentItem()) || isSelectorCompass(event.getCursor())) event.setCancelled(true);
-        if (!isServerMenu(event.getView().getTopInventory())) return;
+        if (!isServerMenu(event.getView())) return;
         event.setCancelled(true);
         if (event.getClickedInventory() != event.getView().getTopInventory()) return;
         ItemStack clicked = event.getCurrentItem();
@@ -280,7 +281,7 @@ public final class McTransfer extends JavaPlugin implements TabExecutor, Listene
 
     @EventHandler
     public void onMenuDrag(InventoryDragEvent event) {
-        if (isServerMenu(event.getView().getTopInventory())) event.setCancelled(true);
+        if (isServerMenu(event.getView())) event.setCancelled(true);
     }
 
     private void openServerMenu(Player player) {
@@ -316,10 +317,9 @@ public final class McTransfer extends JavaPlugin implements TabExecutor, Listene
         player.openInventory(menu);
     }
 
-    private boolean isServerMenu(Inventory inventory) {
-        return inventory != null && inventory.getSize() == 27
-                && inventory.getViewers().stream().anyMatch(viewer -> viewer instanceof Player)
-                && inventory.getTitle().equals(ChatColor.translateAlternateColorCodes('&',
+    private boolean isServerMenu(InventoryView view) {
+        return view != null && view.getTopInventory().getSize() == 27
+                && view.getTitle().equals(ChatColor.translateAlternateColorCodes('&',
                     getConfig().getString("menu.title", "&8Server Selector")));
     }
 
