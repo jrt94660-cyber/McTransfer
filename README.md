@@ -1,4 +1,4 @@
-# McTransfer 1.1.10
+# McTransfer 1.1.11
 
 Paper plugin for direct native transfers (no proxy required) with a PlaceholderAPI online-player-count placeholder.
 
@@ -23,4 +23,4 @@ Up to 5 destination entries under `servers:`. Default economy endpoint template:
 
 
 ## Server Selector GUI
-Players receive a glowing compass in the center hotbar slot (slot 5). Right-click it to open the server selector GUI. Click any enabled destination to transfer. Local block-target teleporting has been removed.
+Players receive a glowing paper in the center hotbar slot (slot 5). Right-click the paper to open the server selector GUI. Click any enabled destination to transfer. Local block-target teleporting has been removed.
