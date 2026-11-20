@@ -44,14 +44,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class McTransfer extends JavaPlugin implements TabExecutor, Listener {
-    private NamespacedKey compassKey;
+    private NamespacedKey paperKey;
     private NamespacedKey serverKey;
     private final Map<String, ServerStatus> statuses = new ConcurrentHashMap<>();
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        compassKey = new NamespacedKey(this, "server_selector_compass");
+        paperKey = new NamespacedKey(this, "server_selector_compass");
         serverKey = new NamespacedKey(this, "menu_server_key");
         getServer().getPluginManager().registerEvents(this, this);
         migrateLegacyDestination();
@@ -214,17 +214,17 @@ public final class McTransfer extends JavaPlugin implements TabExecutor, Listene
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        ItemStack compass = createSelectorCompass();
+        ItemStack compass = createSelectorPaper();
         player.getInventory().setItem(4, compass);
     }
 
-    private ItemStack createSelectorCompass() {
+    private ItemStack createSelectorPaper() {
         ItemStack item = new ItemStack(Material.COMPASS);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', getConfig().getString("menu.compass-name", "&b&lServer Selector")));
         meta.setLore(colorLore(getConfig().getStringList("menu.compass-lore")));
         meta.addEnchant(Enchantment.UNBREAKING, 1, true);
-        meta.getPersistentDataContainer().set(compassKey, PersistentDataType.BYTE, (byte) 1);
+        meta.getPersistentDataContainer().set(paperKey, PersistentDataType.BYTE, (byte) 1);
         item.setItemMeta(meta);
         return item;
     }
@@ -235,27 +235,27 @@ public final class McTransfer extends JavaPlugin implements TabExecutor, Listene
         return result;
     }
 
-    private boolean isSelectorCompass(ItemStack item) {
+    private boolean isSelectorPaper(ItemStack item) {
         if (item == null || item.getType() != Material.COMPASS || !item.hasItemMeta()) return false;
-        return item.getItemMeta().getPersistentDataContainer().has(compassKey, PersistentDataType.BYTE);
+        return item.getItemMeta().getPersistentDataContainer().has(paperKey, PersistentDataType.BYTE);
     }
 
     @EventHandler
     public void onCompassInteract(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-        if (!isSelectorCompass(event.getItem())) return;
+        if (!isSelectorPaper(event.getItem())) return;
         event.setCancelled(true);
         openServerMenu(event.getPlayer());
     }
 
     @EventHandler
     public void onCompassDrop(PlayerDropItemEvent event) {
-        if (isSelectorCompass(event.getItemDrop().getItemStack())) event.setCancelled(true);
+        if (isSelectorPaper(event.getItemDrop().getItemStack())) event.setCancelled(true);
     }
 
     @EventHandler
     public void onCompassInventoryClick(InventoryClickEvent event) {
-        if (isSelectorCompass(event.getCurrentItem()) || isSelectorCompass(event.getCursor())) event.setCancelled(true);
+        if (isSelectorPaper(event.getCurrentItem()) || isSelectorPaper(event.getCursor())) event.setCancelled(true);
         if (!isServerMenu(event.getView())) return;
         event.setCancelled(true);
         if (event.getClickedInventory() != event.getView().getTopInventory()) return;
