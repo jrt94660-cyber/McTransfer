@@ -214,8 +214,14 @@ public final class McTransfer extends JavaPlugin implements TabExecutor, Listene
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        ItemStack paper = createSelectorPaper();
-        player.getInventory().setItem(4, paper);
+        // Remove any existing selector papers first, so rejoining never creates duplicates.
+        for (int slot = 0; slot < player.getInventory().getSize(); slot++) {
+            ItemStack existing = player.getInventory().getItem(slot);
+            if (isSelectorPaper(existing)) {
+                player.getInventory().setItem(slot, null);
+            }
+        }
+        player.getInventory().setItem(4, createSelectorPaper());
     }
 
     private ItemStack createSelectorPaper() {
