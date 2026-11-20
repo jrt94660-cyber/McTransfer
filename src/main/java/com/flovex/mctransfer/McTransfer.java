@@ -290,7 +290,6 @@ public final class McTransfer extends JavaPlugin implements TabExecutor, Listene
             player.sendMessage(ChatColor.RED + "No transfer destinations are configured.");
             return;
         }
-        ServerMenuHolder holder = new ServerMenuHolder();
         Inventory menu = getServer().createInventory(null, 27,
                 ChatColor.translateAlternateColorCodes('&', getConfig().getString("menu.title", "&8Server Selector")));
         int[] slots = {10, 12, 14, 16, 22};
