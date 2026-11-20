@@ -1,4 +1,4 @@
-# McTransfer 1.1.10
+# McTransfer 1.1.11
 messages:
   prefix: "&8[&bMcTransfer&8] "
   no-permission: "&cYou don't have permission to use this command."
@@ -14,10 +14,10 @@ messages:
 # Example: %mctransfer_economy_players% returns only the online count.
 # You may configure up to 5 servers total. Keep server keys short, without underscores.
 menu:
-  title: "&8Server Selector"
-  compass-name: "&b&lServer Selector"
-  compass-lore:
-    - "&7Right-click to open server selector."
+  title: "&8Server Selector Paper"
+  paper-name: "&b&lServer Selector Paper"
+  paper-lore:
+    - "&7Right-click the paper to open server selector."
     - "&7Click a server to transfer."
 
 status:
